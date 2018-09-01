@@ -1,0 +1,34 @@
+#!/bin/bash 
+
+[[ -z $@ ]] && printf "Usage: $(basename $0) <process list>\n\n" >&2 && exit 3
+PROCLIST=($@)
+
+proc_status() {
+    pgrep -x $PROC > /dev/null 2>&1
+    echo $?
+}
+
+for PROC in ${PROCLIST[@]}; do
+    PROC_STATUS=$( proc_status $PROC )
+
+    if [[ $PROC_STATUS -eq 1 ]]; then
+        MISSING+=( $PROC )
+
+    elif [[ $PROC_STATUS -ne 0 ]]; then
+        echo "Unknown state. pgrep exit code for $PROC: ${PROC_STATUS}."
+        exit 3
+
+    fi
+
+done
+
+if [[ -n $MISSING ]]; then
+    echo "CRITICAL: ${#MISSING[@]} missing process(es): ${MISSING[@]}."
+    exit 2
+
+else
+    echo "OK: ${#PROCLIST[@]} of ${#PROCLIST[@]} processes found: ${PROCLIST[@]}."
+    exit 0
+
+fi
+
