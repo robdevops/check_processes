@@ -2,7 +2,7 @@
 set -euo pipefail
 PROCLIST=($@)
 
-[[ -z $@ ]] && printf "Usage: $(basename $0) <process list>\n\n" >&2 && exit 3
+[[ -z $@ ]] && printf "Usage: $( basename $0 ) <process list>\n\n" >&2 && exit 3
 
 proc_status() {
     pgrep -x $1 > /dev/null 2>&1
