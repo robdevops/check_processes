@@ -1,4 +1,5 @@
 #!/bin/bash 
+set -euo pipefail
 
 [[ -z $@ ]] && printf "Usage: $(basename $0) <process list>\n\n" >&2 && exit 3
 PROCLIST=($@)
@@ -22,8 +23,8 @@ for PROC in ${PROCLIST[@]}; do
 
 done
 
-if [[ -n $MISSING ]]; then
-    echo "CRITICAL: ${#MISSING[@]} missing process(es): ${MISSING[@]}."
+if [[ -v MISSING ]]; then
+    echo "CRITICAL: ${#MISSING[@]} missing process: ${MISSING[@]}."
     exit 2
 
 else
