@@ -1,12 +1,13 @@
 #!/bin/bash 
 set -euo pipefail
+PROCLIST=($@)
 
 [[ -z $@ ]] && printf "Usage: $(basename $0) <process list>\n\n" >&2 && exit 3
-PROCLIST=($@)
 
 proc_status() {
     pgrep -x $1 > /dev/null 2>&1
     echo $?
+
 }
 
 for PROC in ${PROCLIST[@]}; do
