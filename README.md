@@ -5,7 +5,7 @@ check_processes plugin for Nagios / Icinga. Checks whether all the specified pro
 
 ## Dependencies
 * procps
-* bash
+* bash 4.2
 
 ## Usage
 ```
