@@ -22,7 +22,7 @@ echo $?
 ```
 
 ```
-/usr/local/bin/check_processes -c 'httpd;crond;ntpd;mysqld;master'
+check_processes -c 'httpd;crond;ntpd;mysqld;master'
 CRITICAL: 1 missing process(es): master.
 
 echo $?
