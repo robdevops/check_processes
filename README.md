@@ -14,7 +14,7 @@ Usage: check_processes [-c 'process1;process2'] [-f 'full command 1;full command
 
 ### Example output
 ```
-/usr/local/bin/check_processes -c 'httpd;crond;ntpd' -f 'node server.js start;node client.js start;php collect;php listen'
+check_processes -c 'httpd;crond;ntpd' -f 'node server.js start;node client.js start;php collect;php listen'
 OK: 7 of 7 processes found: httpd, crond, ntpd, node server.js start, node client.js start, php collect; php listen
 
 echo $?
