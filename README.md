@@ -9,20 +9,20 @@ check_processes plugin for Nagios / Icinga. Checks whether all the specified pro
 
 ## Usage
 ```
-Usage: check_processes <process list>
+Usage: check_processes [-c 'process1;process2'] [-f 'full command 1;full command 2']
 ```
 
 ### Example output
 ```
-/usr/local/bin/check_processes httpd crond ntpd mysqld
-OK: 4 of 4 processes found: httpd crond ntpd mysqld.
+/usr/local/bin/check_processes -c 'httpd;crond;ntpd' -f 'node server.js start;node client.js start;php collect;php listen'
+OK: 7 of 7 processes found: httpd, crond, ntpd, node server.js start, node client.js start, php collect; php listen
 
 echo $?
 0
 ```
 
 ```
-/usr/local/bin/check_processes httpd crond ntpd mysqld master
+/usr/local/bin/check_processes -c 'httpd;crond;ntpd;mysqld;master'
 CRITICAL: 1 missing process(es): master.
 
 echo $?
