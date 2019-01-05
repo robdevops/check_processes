@@ -22,8 +22,8 @@ echo $?
 ```
 
 ```
-check_processes -c 'httpd;crond;ntpd;mysqld;master'
-CRITICAL: 1 missing process(es): master.
+check_processes -c 'httpd;crond;ntpd'
+CRITICAL: 1 missing process(es): ntpd.
 
 echo $?
 2
