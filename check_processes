@@ -1,35 +1,63 @@
 #!/bin/bash 
-set -euo pipefail
-PROCLIST=($@)
-
-[[ -z $@ ]] && printf "Usage: $( basename $0 ) <process list>\n\n" >&2 && exit 3
+set -eo pipefail
 
 proc_status() {
-    pgrep -x $1 > /dev/null 2>&1
-    echo $?
+    pgrep -x "$@" > /dev/null 2>&1
+    return $?
 
 }
 
-for PROC in ${PROCLIST[@]}; do
-    PROC_STATUS=$( proc_status $PROC )
+usage() { 
+  error "Usage: $( basename $0 ) [-c \"process1;process2\"] [-f \"process 1 --with args;process 2 --with-args\"]"
 
-    if [[ $PROC_STATUS -eq 1 ]]; then
-        MISSING+=( $PROC )
+}
 
-    elif [[ $PROC_STATUS -ne 0 ]]; then
-        echo "Unknown state. pgrep exit code for $PROC: ${PROC_STATUS}."
-        exit 3
+error() { 
+  printf "${@}\n" >&2
+  exit 3
 
-    fi
+}
+
+join_by() { 
+  local d=$1
+  shift
+  echo -n "$1"
+  shift
+  printf "%s" "${@/#/$d}"
+
+}
+
+while getopts ":hc:f:" opt; do
+    case $opt in
+      c  ) IFS=';' read -r -a SHORTCOMMAND <<< "$OPTARG" ;;
+      f  ) IFS=';' read -r -a LONGCOMMAND <<< "$OPTARG" ;;
+      :  ) error "Option -$OPTARG requires an argument." ;;
+      \? ) error "Invalid option: -$OPTARG" ;;
+      h  ) usage ;;
+      *  ) usage ;;
+    esac
+done
+
+
+ifs=';' PROCLIST=( "${SHORTCOMMAND[@]}" "${LONGCOMMAND[@]}" )
+[[ -z "${PROCLIST[@]}" ]] && usage
+
+for PROC in "${SHORTCOMMAND[@]}"; do
+    proc_status "$PROC" || MISSING+=( "$PROC" )
 
 done
 
-if [[ -v MISSING ]]; then
-    echo "CRITICAL: ${#MISSING[@]} missing process: ${MISSING[@]}."
+for PROC in "${LONGCOMMAND[@]}"; do
+    proc_status -f "$PROC" || MISSING+=( "$PROC" )
+
+done
+
+if [[ -n ${MISSING[@]} ]]; then
+    echo "CRITICAL: ${#MISSING[@]} missing process: $( join_by ', ' "${MISSING[@]}" )"
     exit 2
 
 else
-    echo "OK: ${#PROCLIST[@]} of ${#PROCLIST[@]} processes found: ${PROCLIST[@]}."
+    echo "OK: ${#PROCLIST[@]} of ${#PROCLIST[@]} processes found: $( join_by ', ' "${PROCLIST[@]}" )"
     exit 0
 
 fi
