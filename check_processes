@@ -8,7 +8,7 @@ proc_status() {
 }
 
 usage() { 
-  error "Usage: $( basename $0 ) [-c \"process1;process2\"] [-f \"process 1 --with args;process 2 --with-args\"]"
+  error "Usage: $( basename $0 ) [-c 'process1;process2'] [-f 'process1 --with args;/usr/local/bin/process2 --with-full-path']"
 
 }
 
