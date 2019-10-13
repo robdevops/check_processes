@@ -1,24 +1,24 @@
-#!/bin/bash 
+#!/bin/bash
 set -eo pipefail
 
 proc_status() {
-    pgrep -x "$@" > /dev/null 2>&1
-    return $?
+	pgrep -x "$@" > /dev/null 2>&1
+	return $?
 
 }
 
-usage() { 
+usage() {
   error "Usage: $( basename $0 ) [-c 'process1;process2'] [-f 'process1 --with args;/usr/local/bin/process2 --with-full-path']"
 
 }
 
-error() { 
+error() {
   printf "${@}\n" >&2
   exit 3
 
 }
 
-join_by() { 
+join_by() {
   local d=$1
   shift
   echo -n "$1"
@@ -28,14 +28,14 @@ join_by() {
 }
 
 while getopts ":hc:f:" opt; do
-    case $opt in
-      c  ) IFS=';' read -r -a SHORTCOMMAND <<< "$OPTARG" ;;
-      f  ) IFS=';' read -r -a LONGCOMMAND <<< "$OPTARG" ;;
-      :  ) error "Option -$OPTARG requires an argument." ;;
-      \? ) error "Invalid option: -$OPTARG" ;;
-      h  ) usage ;;
-      *  ) usage ;;
-    esac
+	case $opt in
+	  c  ) IFS=';' read -r -a SHORTCOMMAND <<< "$OPTARG" ;;
+	  f  ) IFS=';' read -r -a LONGCOMMAND <<< "$OPTARG" ;;
+	  :  ) error "Option -$OPTARG requires an argument." ;;
+	  \? ) error "Invalid option: -$OPTARG" ;;
+	  h  ) usage ;;
+	  *  ) usage ;;
+	esac
 done
 
 
@@ -43,22 +43,22 @@ ifs=';' PROCLIST=( "${SHORTCOMMAND[@]}" "${LONGCOMMAND[@]}" )
 [[ -z "${PROCLIST[@]}" ]] && usage
 
 for PROC in "${SHORTCOMMAND[@]}"; do
-    proc_status "$PROC" || MISSING+=( "$PROC" )
+	proc_status "$PROC" || MISSING+=( "$PROC" )
 
 done
 
 for PROC in "${LONGCOMMAND[@]}"; do
-    proc_status -f "$PROC" || MISSING+=( "$PROC" )
+	proc_status -f "$PROC" || MISSING+=( "$PROC" )
 
 done
 
 if [[ -n ${MISSING[@]} ]]; then
-    echo "CRITICAL: ${#MISSING[@]} missing process: $( join_by ', ' "${MISSING[@]}" )"
-    exit 2
+	echo "CRITICAL: ${#MISSING[@]} missing process: $( join_by ', ' "${MISSING[@]}" )"
+	exit 2
 
 else
-    echo "OK: ${#PROCLIST[@]} of ${#PROCLIST[@]} processes found: $( join_by ', ' "${PROCLIST[@]}" )"
-    exit 0
+	echo "OK: ${#PROCLIST[@]} of ${#PROCLIST[@]} processes found: $( join_by ', ' "${PROCLIST[@]}" )"
+	exit 0
 
 fi
 
