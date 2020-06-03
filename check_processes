@@ -53,13 +53,13 @@ for PROC in "${LONGCOMMAND[@]}"; do
 done
 
 if [[ -n ${MISSING[@]} ]]; then
-	[[ ${#MISSING[@]} = 1 ]] && verb=process || verb=processes
-	echo "CRITICAL: ${#MISSING[@]} missing $verb: $( join_by ', ' "${MISSING[@]}" )"
+	[[ ${#MISSING[@]} = 1 ]] && noun=process || noun=processes
+	echo "CRITICAL: ${#MISSING[@]} missing $noun: $( join_by ', ' "${MISSING[@]}" )"
 	exit 2
 
 else
-	[[ ${#PROCLIST[@]} = 1 ]] && verb=process || verb=processes
-	echo "OK: ${#PROCLIST[@]} of ${#PROCLIST[@]} $verb found: $( join_by ', ' "${PROCLIST[@]}" )"
+	[[ ${#PROCLIST[@]} = 1 ]] && noun=process || noun=processes
+	echo "OK: ${#PROCLIST[@]} of ${#PROCLIST[@]} $noun found: $( join_by ', ' "${PROCLIST[@]}" )"
 	exit 0
 
 fi
