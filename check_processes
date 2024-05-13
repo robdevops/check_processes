@@ -52,9 +52,12 @@ for PROC in "${LONGCOMMAND[@]}"; do
 
 done
 
-if [[ -n ${MISSING[@]} ]]; then
-	[[ ${#MISSING[@]} = 1 ]] && noun=process || noun=processes
-	echo "CRITICAL: ${#MISSING[@]} missing $noun: $( join_by ', ' "${MISSING[@]}" )"
+if [[ ${#MISSING[@]} = 1 ]]; then
+	echo "WARNING: 1 missing process: ${MISSING[@]}"
+	exit 1
+
+elif [[ -n ${MISSING[@]} ]]; then
+	echo "CRITICAL: ${#MISSING[@]} missing processes: $( join_by ', ' "${MISSING[@]}" )"
 	exit 2
 
 else
